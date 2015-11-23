@@ -1,0 +1,2 @@
+# projectz
+demo go project
