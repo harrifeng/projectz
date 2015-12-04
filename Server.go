@@ -3,14 +3,19 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"github.com/codegangsta/negroni"
+	"github.com/go-zoo/bone"
 )
 
-func main() {
-	fmt.Println("H")
-	http.HandleFunc("/", handler)
-	http.ListenAndServe("127.0.0.1:3333", nil)
+func handler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Hello %v\n", bone.GetValue(r, "id"))
 }
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "Hello", r.URL.Path)
+func main() {
+	mux := bone.New()
+	mux.Get("/some/page/:id", http.HandlerFunc(handler))
+	n := negroni.Classic()
+	n.UseHandler(mux)
+	n.Run(":3003")
 }
+
